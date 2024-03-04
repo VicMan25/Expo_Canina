@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -12,9 +13,9 @@ public class Expo_Canina {
 			   expo.mostrarMenu();
 			}
 	
-		    private ArrayList<Perro> misPerros = new ArrayList<>();
+			private ArrayList<Perro> misPerros = new ArrayList<>();
 		    private Scanner lector = new Scanner(System.in);
-		    
+		   
 		    public void mostrarMenu() { 
 		    boolean activo=true;
 		    do {
@@ -24,8 +25,9 @@ public class Expo_Canina {
 		            + "2. Consulta personalizada. \n"
 		            + "3. Listado de los perros. \n"
 		            + "4. Modificar información del perro. \n"
-		            + "5. Eliminar informacion del perro. \n"
-		            + "6. Cerrar Programa.\n \n"
+		            + "5. Mostrar información de un perro en específico. \n"
+		            + "6. Eliminar informacion del perro. \n"
+		            + "7. Cerrar Programa.\n \n"
 		            + "Digite su opción");
 		    
 		    System.out.println("=======================================");
@@ -53,12 +55,14 @@ public class Expo_Canina {
 		        case 4:
 		        	mostrarMenuModificaciones();
 		        break;
-		        
 		        case 5:
+		        	mostrarPerroEspecifico();
+		        break;
+		        case 6:
 		        	eliminarPerro();
 		        break;
 		        
-		        case 6:
+		        case 7:
 		        	activo=false;
 		            System.out.println("Programa terminado.");
 		        break;
@@ -108,15 +112,122 @@ public class Expo_Canina {
 		    		mostrarMenuConsultas();
 		    	}
 		     }
-		    
+		
 		    public void listarPerros() {
-		    	for (Perro p : misPerros) {
-		    		System.out.println("============== LISTADO ===============");
-                    System.out.println(" Nombre: "+p.getNombrePerro()+"\n Edad En Meses: "+p.getEdadMeses() + " \n Raza: " +
-                    p.getRaza()+ " \n Puntaje: " + p.getPuntaje()+ " \n Foto: "+p.getFoto()); 
-                    System.out.println("======================================");
-                } 
+		        if (misPerros.isEmpty()) {
+		            System.out.println("No hay perros registrados en el sistema.");
+		        } else {
+		            boolean activo = true;
+		            do {
+		                System.out.println("========== LISTADO DE PERROS ==========");
+		                System.out.println("Cómo desea organizar la lista de perros:\n"
+		                        + "1. Por raza en orden alfabético.\n"
+		                        + "2. Por puntaje de mayor a menor.\n"
+		                        + "3. Por edad de mayor a menor.\n"
+		                        + "4. Volver al menú principal.\n \n"
+		                        + "Digite su opción:");
+		                System.out.println("=======================================");
+
+		                int opcion = lector.nextInt();
+		                lector.nextLine();
+
+		                switch (opcion) {
+		                    case 1:
+		                        ordenarPorRaza();
+		                        mostrarListado();
+		                        break;
+		                    case 2:
+		                        ordenarPorPuntaje();
+		                        mostrarListado();
+		                        break;
+		                    case 3:
+		                        ordenarPorEdad();
+		                        mostrarListado();
+		                        break;
+		                    case 4:
+		                        activo = false;
+		                        break;
+		                    default:
+		                        System.out.println("Opción Incorrecta, intenta nuevamente.");
+		                        break;
+		                }
+		            } while (activo);
+		        }
 		    }
+
+		    private void ordenarPorRaza() {
+		        for (int i = 0; i < misPerros.size() - 1; i++) {
+		            for (int j = i + 1; j < misPerros.size(); j++) {
+		                Perro perro1 = misPerros.get(i);
+		                Perro perro2 = misPerros.get(j);
+		                if (perro1.getRaza().compareToIgnoreCase(perro2.getRaza()) > 0) {
+		                    Perro temp = misPerros.get(i);
+		                    misPerros.set(i, misPerros.get(j));
+		                    misPerros.set(j, temp);
+		                }
+		            }
+		        }
+		    }
+
+		    private void ordenarPorPuntaje() {
+		        for (int i = 0; i < misPerros.size() - 1; i++) {
+		            for (int j = i + 1; j < misPerros.size(); j++) {
+		                Perro perro1 = misPerros.get(i);
+		                Perro perro2 = misPerros.get(j);
+		                if (perro1.getPuntaje() < perro2.getPuntaje()) {
+		                    Perro temp = misPerros.get(i);
+		                    misPerros.set(i, misPerros.get(j));
+		                    misPerros.set(j, temp);
+		                }
+		            }
+		        }
+		    }
+
+		    private void ordenarPorEdad() {
+		        for (int i = 0; i < misPerros.size() - 1; i++) {
+		            for (int j = i + 1; j < misPerros.size(); j++) {
+		                Perro perro1 = misPerros.get(i);
+		                Perro perro2 = misPerros.get(j);
+		                if (perro1.getEdadMeses() < perro2.getEdadMeses()) {
+		                    Perro temp = misPerros.get(i);
+		                    misPerros.set(i, misPerros.get(j));
+		                    misPerros.set(j, temp);
+		                }
+		            }
+		        }
+		    }
+
+		    private void mostrarListado() {
+		        System.out.println("============== LISTADO ===============");
+		        for (Perro p : misPerros) {
+		            System.out.println(" Nombre: " + p.getNombrePerro() + "\n Edad en meses: " + p.getEdadMeses() + " \n Raza: " +
+		                    p.getRaza() + " \n Puntaje: " + p.getPuntaje() + " \n Foto: " + p.getFoto());
+		            System.out.println("======================================");
+		        }
+		    }
+		    
+		    public void mostrarPerroEspecifico() {
+		    	if (misPerros.isEmpty()) {
+		            System.out.println("No hay perros registrados en el sistema.");
+		        }
+		    	else {
+		        System.out.println("Ingresa el nombre del perro a consultar: ");
+		        String nombrePerro = lector.nextLine();
+
+		        for (Perro p : misPerros) {
+		            if (p.getNombrePerro().equalsIgnoreCase(nombrePerro)) {
+		            	System.out.println("========== DATOS DEL PERRO ===========");
+		            	System.out.println(" Nombre: " + p.getNombrePerro() + "\n Edad en meses: " + p.getEdadMeses() + " \n Raza: " +
+			                    p.getRaza() + " \n Puntaje: " + p.getPuntaje() + " \n Foto: " + p.getFoto());
+			            System.out.println("======================================");
+		                break;
+		            }
+		            else {
+		            	System.out.println("No se encontró un perro con ese nombre. Intente nuevamente. ");
+		            }
+		        }
+		    	}
+		     }
 		    
 		    public void eliminarPerro() {
 		        if (misPerros.isEmpty()) {
@@ -159,7 +270,7 @@ public class Expo_Canina {
 			            + "1. Perro Ganador. \n"
 			            + "2. Perro con menor puntaje. \n"
 			            + "3. Perro de mayor edad. \n"
-			            + "4. Salir del menú de consultas. \n \n"
+			            + "4. Volver al menú principal.\n \n"
 			            + "Digite su opción");
 			   
 			    System.out.println("=======================================");
@@ -253,6 +364,9 @@ public class Expo_Canina {
 			  }
 		    
 		    public void mostrarMenuModificaciones() {
+		    	if (misPerros.isEmpty()) {
+		            System.out.println("No hay perros registrados en el sistema.");
+		        } else {
 	            boolean activo = true;
 	            Perro perroEncontrado = null;
 
@@ -273,7 +387,7 @@ public class Expo_Canina {
 	                                + "2. Raza. \n"
 	                                + "3. Puntaje. \n"
 	                                + "4. Foto. \n"
-	                                + "5. Salir del menú de Modificaciones. \n \n"
+	                                + "5. Volver al menú principal.\n \n"
 	                                + "Digite su opción");
 
 	                        int opcion = lector.nextInt();
@@ -306,6 +420,7 @@ public class Expo_Canina {
 	                    System.out.println("No se encontró un perro con ese nombre. Intente nuevamente.");
 	                }
 	            } while (activo);
+		        }
 	        }
 		    
 		    public Perro buscarPerro(String nombrePerro) {
